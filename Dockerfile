@@ -17,4 +17,7 @@ RUN npm run build
 FROM nginx:alpine
 COPY web/nginx.conf /etc/nginx/conf.d/default.conf
 COPY --from=build /app/dist /usr/share/nginx/html
-# exercise media (img/gif) is mounted at runtime from the media volume
+# Include exercise media in single-container deployments such as Railway.
+# Docker Compose can still mount these paths at runtime.
+COPY media/img /usr/share/nginx/html/img
+COPY media/gif /usr/share/nginx/html/gif
