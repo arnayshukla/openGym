@@ -1,0 +1,8 @@
+**/node_modules/
+frontend/dist/
+frontend/.vite/
+*.log
+.DS_Store
+.env
+**/.env.local
+/data/

@@ -13,7 +13,7 @@ import { modeOf, fmtSec, isBw, isPerSide, sideReps } from './history.js'
 import { uid, todayISO, DAYN, fmtNum, exCount } from './format.js'
 import { t } from './i18n.js'
 
-const PLAN_FMT = 1
+const PLAN_FMT = 2
 const WEEK_ORDER = [1, 2, 3, 4, 5, 6, 0]   // Mon-first, matching the Plan screen
 
 // Keep only the meaningful config fields, so the file stays small and readable.
@@ -45,6 +45,7 @@ function cleanEx(e) {
   if (e.repsMin != null) o.repsMin = e.repsMin
   if (e.repsMax != null) o.repsMax = e.repsMax
   if (e.sg) o.sg = e.sg
+  if (e.restSec > 0) o.restSec = e.restSec
   return o
 }
 
@@ -73,7 +74,7 @@ export function buildPlanBundle(S, name) {
  */
 export function parsePlan(raw) {
   const data = typeof raw === 'string' ? JSON.parse(raw) : raw
-  if (!data || !data.opengym_plan || !Array.isArray(data.routines)) {
+  if (!data || ![1, 2].includes(data.opengym_plan) || !Array.isArray(data.routines)) {
     throw new Error(t('this isn’t an openGym plan file'))
   }
   const customEx = (Array.isArray(data.customEx) ? data.customEx : []).filter(c => c && c.id)
@@ -147,7 +148,7 @@ function scheme(e, unit) {
   const sets = e.sets || 1
   const mode = modeOf(e)
   if (mode === 'cardio') {
-    const body = `${e.min || 20} min @ ${fmtNum(e.speed || 8)} km/h`
+    const body = `${e.min || 20} min @ ${fmtNum(e.speed ?? 8)} km/h`
     return sets > 1 ? `${sets} × ${body}` : body
   }
   let s = mode === 'time' ? `${sets} × ${fmtSec(e.sec || 45)}` : `${sets} × ${e.reps ?? 10}`

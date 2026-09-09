@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, lazy, Suspense } from 'react'
 import { HashRouter, Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom'
 import { useStore } from './store/useStore.js'
 import { useUI } from './store/useUI.js'
@@ -24,6 +24,8 @@ import History from './views/History.jsx'
 import Library from './views/Library.jsx'
 import Settings from './views/Settings.jsx'
 import Admin from './views/Admin.jsx'
+const ExplorePlans = lazy(() => import('./views/ExplorePlans.jsx'))
+const Nutrition = lazy(() => import('./views/Nutrition.jsx'))
 
 bindUI(useUI)   // lets the shared controls open sheets without importing the store at module scope
 
@@ -69,6 +71,8 @@ function Shell() {
             <Routes>
               <Route path="/home" element={<Home />} />
               <Route path="/plan" element={<Plan />} />
+              <Route path="/plan/explore" element={<Suspense fallback={<p>Loading plans…</p>}><ExplorePlans /></Suspense>} />
+              <Route path="/nutrition" element={<Suspense fallback={<p>Loading nutrition…</p>}><Nutrition /></Suspense>} />
               <Route path="/plan/r/:id" element={<RoutineEdit />} />
               <Route path="/workout" element={<Workout />} />
               <Route path="/stats" element={<Stats />} />

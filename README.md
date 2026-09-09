@@ -56,6 +56,8 @@ as a home-screen app, passkey sign-in, offline support, sync across your phone a
 
 ## Features
 
+**New: workout and nutrition planners.** Explore six ready-made workout families using the existing exercise catalog, save multiple plans, or build a personalized routine. Create seven-day menus from 96 source-linked ingredients, 40 meal combinations and 12 snacks, with dietary exclusions, ingredient-level swaps and optional energy estimates. See [planner usage, architecture and safety boundaries](docs/PLANNERS.md).
+
 - ⚖️ **Body-weight tracking** — interactive chart with a goal line you set, gains/losses colored by whether they move toward it
 - 🏋️ **Weekly plan** — a routine per weekday, over a library of **1,324 exercises** (searchable, with animated demos)
 - 🗓️ **Reschedule any day** — sick, missed a session, or fewer gym days this week? Move a workout to another day without touching your weekly plan

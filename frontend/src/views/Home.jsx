@@ -80,12 +80,13 @@ export default function Home() {
           <span className="lrow-i"><Icon name="sparkles" /></span>
           <div className="big" style={{ fontSize: 22 }}>{t('Welcome!')}</div>
         </div>
-        <div className="muted small" style={{ marginBottom: 12 }}>{t('Set up your weekly routine to get going — or load a ready-made Push / Pull / Legs plan.')}</div>
-        <Button variant="primary" icon="sparkles" onClick={loadStarterPlan}>{t('Load starter plan (PPL)')}</Button>
+        <div className="muted small" style={{ marginBottom: 12 }}>{t('Start with a ready-made routine for your time, equipment and experience.')}</div>
+        <Button variant="primary" icon="sparkles" onClick={loadStarterPlan}>{t('Explore workout plans')}</Button>
         <div style={{ height: 8 }} /><Button onClick={() => nav('/plan')}>{t('Build my own plan')}</Button>
       </div>
     )}
 
+    <div className="card"><Button onClick={() => nav('/nutrition')}>{t('Meals & nutrition')}</Button></div>
     <div className="card">
       <div className="row between" style={{ marginBottom: 6 }}>
         <h2 style={{ margin: 0 }}>{t('Body weight')}</h2>
