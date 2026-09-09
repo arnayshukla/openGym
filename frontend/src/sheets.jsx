@@ -7,7 +7,6 @@ import { lastEntryFor, bestWeightFor, buildSets, effectiveRoutineId, workoutVolu
 import { beep, vibrate } from './lib/sound.js'
 import { t, instrFor, getLang, INSTR_LANGS } from './lib/i18n.js'
 import { nav } from './lib/nav.js'
-import { starterRoutines } from './lib/starter.js'
 import Media, { Thumb } from './components/Media.jsx'
 import Stepper from './components/Stepper.jsx'
 import Icon from './components/Icon.jsx'
@@ -44,12 +43,7 @@ export function confirmSheet(opts) {
 
 /* ============================ starter plan ============================ */
 export function loadStarterPlan() {
-  const [push, pull, legs] = starterRoutines()
-  update(st => {
-    st.routines.push(push, pull, legs)
-    st.week[1] = push.id; st.week[3] = pull.id; st.week[5] = legs.id
-  })
-  toast(t('Starter plan loaded — Mon Push · Wed Pull · Fri Legs'))
+  nav('/plan/explore')
 }
 
 /* ============================ weight picker (shared: body weight + goal) ============================ */
@@ -502,6 +496,9 @@ function ExConfig({ ex, existing, onSave, onDelete, close, routine }) {
     const prog = {}
     if (c.prog) prog.prog = c.prog
     if (c.inc > 0) prog.inc = c.inc
+    // Keep planner metadata when the existing editor replaces an exercise config.
+    if (c.restSec > 0) prog.restSec = Math.min(600, Math.max(15, Math.round(c.restSec)))
+    if (c.pattern) prog.pattern = c.pattern
     // Written only when it differs from what the dataset already says, so a barbell config
     // stays exactly the shape it was before these flags existed.
     // `bodyweight` is true of a hold as much as of a set of reps; `side` is not — it counts
@@ -509,7 +506,7 @@ function ExConfig({ ex, existing, onSave, onDelete, close, routine }) {
     // rather than carrying a flag nothing downstream can read.
     const flags = {}
     if (bw !== isBodyweightEq(ex.id)) flags.bodyweight = bw
-    if (cardio) onSave({ sets, min: Math.max(1, Math.round(c.min) || 20), speed: Math.max(0, c.speed || 8) })
+    if (cardio) onSave({ sets, min: Math.max(1, Math.round(c.min) || 20), speed: Math.max(0, c.speed ?? 8), ...prog })
     else if (mode === 'time') onSave({ sets, mode: 'time', sec: Math.max(1, Math.round(c.sec) || 45), weight: Math.max(0, c.weight || 0), ...flags, ...prog })
     else {
       // A unilateral target is stored even: the split has to divide, and a typed 15 would
@@ -591,6 +588,7 @@ function ExConfig({ ex, existing, onSave, onDelete, close, routine }) {
         : t('Reps climb by one whenever every set was clean. Set a ceiling to add sets instead of reps forever.')}
     </div>}
     <ProgressionFields ex={ex} mode={mode} c={c} setC={setC} routine={routine} unit={st.unit} />
+    <div className="row cfgrow" style={{ marginBottom: 18 }}><Stepper label={t('Rest (seconds)')} value={c.restSec ?? st.restSec} step={15} decimal={false} onChange={v => setC(x => ({ ...x, restSec: Math.max(15, Math.min(600, v)) }))} /></div>
     <Button variant="primary" onClick={save}>{existing ? t('Save') : t('Add to routine')}</Button>
     {ex.custom && <><div style={{ height: 8 }} /><Button icon="pencil" onClick={() => { close(); customExSheet(ex) }}>{t('Edit or delete this exercise')}</Button></>}
     {onDelete && <><div style={{ height: 8 }} /><Button variant="danger" onClick={() => { close(); onDelete() }}>{t('Remove from routine')}</Button></>}

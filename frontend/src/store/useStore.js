@@ -4,6 +4,7 @@ import { localTZ } from '../lib/format.js'
 import { registerCustom } from '../lib/exercises.js'
 import { DEMO, DEMO_SEEDED } from '../lib/demo.js'
 import { MOBILE, nativeLoad, nativeSave, syncReminder } from '../lib/mobile.js'
+import { migratePlans, captureActivePlan } from '../lib/training-plans.js'
 
 const KEY = 'gym_state_v1'
 export const DEF = {
@@ -22,12 +23,12 @@ const clone = o => JSON.parse(JSON.stringify(o))
 function loadState() {
   try {
     const raw = localStorage.getItem(KEY)
-    if (raw) return Object.assign(clone(DEF), JSON.parse(raw))
+    if (raw) return migratePlans(Object.assign(clone(DEF), JSON.parse(raw)))
   } catch (e) { /* ignore */ }
-  return clone(DEF)
+  return migratePlans(clone(DEF))
 }
 
-const hasData = st => !!((st.workouts || []).length || (st.routines || []).length || (st.bodyweight || []).length)
+const hasData = st => !!((st.workouts || []).length || (st.routines || []).length || (st.bodyweight || []).length || (st.trainingPlans || []).length || (st.dietPlans || []).length)
 
 export const useStore = create((set, get) => {
   let pushTm = null
@@ -41,6 +42,7 @@ export const useStore = create((set, get) => {
   }
 
   const persist = (S, push = true) => {
+    captureActivePlan(S)
     S._ts = Date.now()
     registerCustom(S.customEx)
     localStorage.setItem(KEY, JSON.stringify(S))
